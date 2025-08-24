@@ -1,86 +1,88 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Love Guru Chat</title>
+  <meta charset="UTF-8">
+  <title>Love Guru 💘</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #ffe6eb;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-    }
-    .chatbox {
-      background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      width: 100%;
-      max-width: 400px;
+      background: #fdf6f9;
       display: flex;
       flex-direction: column;
-      overflow: hidden;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
     }
-    .messages {
-      padding: 10px;
-      flex: 1;
+    #chat {
+      width: 100%;
+      max-width: 500px;
+      background: #fff;
+      border-radius: 12px;
+      padding: 15px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
       overflow-y: auto;
-      font-size: 14px;
+      height: 400px;
+      margin-bottom: 10px;
     }
-    .input-area {
-      display: flex;
-      border-top: 1px solid #ddd;
-    }
-    .input-area input {
-      flex: 1;
-      border: none;
+    .msg {
+      margin: 8px 0;
       padding: 10px;
-      font-size: 14px;
+      border-radius: 8px;
     }
-    .input-area button {
-      background: #ff4d6d;
+    .user { background: #e3f2fd; text-align: right; }
+    .bot { background: #fce4ec; text-align: left; }
+    #inputArea {
+      display: flex;
+      width: 100%;
+      max-width: 500px;
+    }
+    input {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px 0 0 8px;
+      outline: none;
+    }
+    button {
+      padding: 10px;
       border: none;
-      color: #fff;
-      padding: 10px 15px;
+      background: #e91e63;
+      color: white;
+      border-radius: 0 8px 8px 0;
       cursor: pointer;
     }
   </style>
 </head>
 <body>
-  <div class="chatbox">
-    <div class="messages" id="messages"></div>
-    <div class="input-area">
-      <input id="userInput" type="text" placeholder="Ask Love Guru..." />
-      <button onclick="sendMessage()">Send</button>
-    </div>
+  <div id="chat"></div>
+  <div id="inputArea">
+    <input id="msgInput" type="text" placeholder="Ask Love Guru..." />
+    <button onclick="sendMessage()">Send</button>
   </div>
 
   <script>
     async function sendMessage() {
-      const input = document.getElementById("userInput");
-      const msg = input.value.trim();
-      if (!msg) return;
+      const input = document.getElementById("msgInput");
+      const chat = document.getElementById("chat");
+      const userMsg = input.value.trim();
+      if (!userMsg) return;
 
-      // Show user message
-      const messagesDiv = document.getElementById("messages");
-      messagesDiv.innerHTML += "<div><b>You:</b> " + msg + "</div>";
+      chat.innerHTML += `<div class="msg user">${userMsg}</div>`;
       input.value = "";
 
-      // Call backend API
       try {
         const response = await fetch("/api/chat", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message: msg })
+          body: JSON.stringify({ message: userMsg }),
         });
+
         const data = await response.json();
-        messagesDiv.innerHTML += "<div><b>Love Guru:</b> " + data.reply + "</div>";
-        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        chat.innerHTML += `<div class="msg bot">${data.reply}</div>`;
+        chat.scrollTop = chat.scrollHeight;
       } catch (err) {
-        messagesDiv.innerHTML += "<div style='color:red'><b>Error:</b> Could not connect</div>";
+        chat.innerHTML += `<div class="msg bot">Error talking to Love Guru 😢</div>`;
       }
     }
   </script>
